@@ -1,0 +1,198 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Show All Players</title>
+   	<meta charset="utf-8" />
+   
+</head>
+<body>
+    <div>
+        <h2>Show All Players</h2>
+        <ul id="GetAll" />
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <h2>Search</h2>
+
+
+    <select id="UserSelect">
+        <option value="">- Select - </option>
+        <option value="Reg_ID">Reg_ID</option>
+        <option value="Player_name">Player_name</option>
+        <option value="Team_name">Team_name</option>
+        <option value="DoB">DoB</option>
+    </select>
+
+    <input type="text" id="PlayerId" size="15" />
+    <input type="button" value="Search" onclick="find();" />
+    <input type="button" value="Delete" onclick="del();" />
+
+    <p id="Player" />
+
+    <br />
+    <p id="UserSelect" />
+
+    <h2>Add a Player</h2>
+    <form id="User2">
+
+        <label for="registration_ID">ID:</label> <input type="text" id="Registration_ID" name="Registration_ID" /><br />
+        <label for="player_name">Name:</label> <input type="text" id="Player_name" name="Player_name" /><br />
+        <label for="team_name">Team Name:</label> <input type="text" id="Team_name" name="Team_name" /> <br />
+        <label for="date_of_birth">DoB:</label> <input type="text" id="Date_of_birth" name="Date_of_birth" /> <br />
+        <input type="button" id="post" value="Add" onclick="add();" />
+    </form>
+
+    <h2>Update a Player</h2>
+    <form>
+
+        <label for="registration_ID">ID:</label> <input type="text" id="Registration_ID" name="Registration_ID" size="15" /><br />
+        <label for="player_name">Name:</label> <input type="text" id="Player_name" name="Player_name" size="15" /><br />
+        <label for="team_name">Team Name:</label> <input type="text" id="Team_name" name="Team_name" size="15" /> <br />
+        <label for="date_of_birth">DoB:</label> <input type="text" id="Date_of_birth" name="Date_of_birth" size="15" /> <br />
+        <input type="button" id="post" value="Update" onclick="update();" />
+    </form>
+    <br />
+
+    <br />
+
+
+
+
+    <script>
+        var uri = 'api/Player';
+
+
+        $(document).ready(function () {
+            // Send an AJAX request
+            displayData();
+        });
+
+        function displayData() {
+            $('ul').empty();
+            $.ajax({
+                type: 'GET',
+                url: uri,
+                success: function (data) {
+                    $.each(data, function (key, item) {
+
+                        $('<li>', { text: formatItem(item) }).appendTo($('#GetAll'));
+                    });
+                }
+            })
+
+        }
+        function formatItem(item) {
+            return 'ID: ' + 'p' + item.Registration_ID + ' Player Name : ' + item.Player_name + ' Team Name : ' + item.Team_name + ' DoB :' + item.Date_of_birth;
+        }
+
+
+        function add() {
+            if ($('#Registration_ID').val() != "") {
+
+                $.ajax({
+                    type: 'POST',
+                    url: uri,
+                    data: $('form').serialize(),
+                    success: function (data) {
+                        displayData();
+
+                    }
+                })
+            } else {
+                $(function () {
+                    alert('Please check your input')
+
+                });
+            }
+        }
+
+
+        function find() {
+            // var id = $('#PlayerId').val();
+
+            var param = $('UserSelect').val();
+            if ($('#UserSelect').val() == "Reg_ID") {
+
+                var id = $('#PlayerId').val();
+                $.ajax({
+                    type: 'GET',
+                    url: uri + '/' + id,
+                    success: function (data) {
+                        $('#Player').text(formatItem(data));
+                    }
+
+                })
+            } else if ($('#UserSelect').val() == "Player_name") {
+
+                var name = $('#PlayerId').val();
+                $.ajax({
+                    type: 'GET',
+                    url: uri + '/' + name,
+                    success: function (data) {
+                        $('#Player').text(formatItem(data));
+                    }
+
+                })
+            } else if ($('#UserSelect').val() == "Team_name") {
+
+                var team = $('#PlayerId').val();
+                $.ajax({
+                    type: 'GET',
+                    url: uri + '/' + team,
+                    success: function (data) {
+                        $('#Player').text(formatItem(data));
+                    }
+
+                })
+            } else if ($('#UserSelect').val() == "DoB") {
+
+                var DoB = $('#PlayerId').val();
+                $.ajax({
+                    type: 'GET',
+                    url: uri + '/' + DoB,
+                    success: function (data) {
+                        $('#Player').text(formatItem(data));
+                    }
+
+                })
+            }
+        }
+
+        function del() {
+            var id = $('#PlayerId').val();
+            $.ajax({
+                type: 'DELETE',
+                url: uri + '/' + id,
+                success: function (data) {
+                    displayData();
+                },
+                error: function (jqXHR, textStatus, err) {
+                    $('#movie').text('Error: ' + err);
+                }
+            })
+        }
+
+        function update() {
+            if ($('#Registration_ID').val() != "") {
+
+
+                var id = $('#Registration_ID').val();
+
+                $.ajax({
+                    type: 'PUT',
+                    url: uri + "/" + id,
+                    data: $('form').serialize(),
+                    success: function (data) {
+                        displayData();
+                    }
+                })
+            } else {
+                alert('The player you want to update does not exist!')
+            }
+
+        }
+
+    </script>
+
+</body>
+</html>
