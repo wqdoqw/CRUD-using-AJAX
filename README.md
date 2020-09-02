@@ -56,4 +56,4 @@ Delete
             }
 ```
           
-![alt text](https://github.com/wqdoqw/CRUD-using-AJAX/blob/master/1.PNG)
+![alt text](https://github.com/wqdoqw/CRUD-using-AJAX/blob/master/2.PNG)
